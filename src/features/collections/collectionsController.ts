@@ -27,3 +27,12 @@ export const createCollection = async (collectionDto: CollectionDto) => {
   console.log(newCollection);
   return { id: newCollection._id };
 };
+
+export const getAllCollections = async () => {
+  const allCollections = await Collection.find();
+  console.log(allCollections);
+  if (allCollections.length === 0) {
+    return null;
+  }
+  return allCollections;
+};

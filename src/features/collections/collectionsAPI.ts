@@ -1,7 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
+import { respond } from '../../utils/apiUtils';
 import {
   createCollection,
   deleteCollection,
+  getAllCollections,
   getCollection,
   updateCollection,
 } from './collectionsController';
@@ -9,11 +11,25 @@ import {
 export const collectionRouter = express.Router();
 
 collectionRouter.get(
+  '/all',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log('called all');
+      const response = await getAllCollections();
+      respond(res, response);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+collectionRouter.get(
   '/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log('called get');
       const response = await getCollection(req.params.id);
-      res.send(response);
+      respond(res, response);
     } catch (error) {
       next(error);
     }
@@ -26,7 +42,7 @@ collectionRouter.post(
     try {
       console.log('received psot');
       const response = await createCollection(req.body);
-      res.send(response);
+      respond(res, response);
     } catch (error) {
       next(error);
     }
@@ -39,7 +55,7 @@ collectionRouter.put(
     try {
       console.log('received update');
       const response = await updateCollection(req.params.id, req.body);
-      res.send(response);
+      respond(res, response);
     } catch (error) {
       next(error);
     }
@@ -52,7 +68,7 @@ collectionRouter.delete(
     try {
       console.log('received delete');
       const response = await deleteCollection(req.params.id);
-      res.send(response);
+      respond(res, response);
     } catch (error) {
       next(error);
     }

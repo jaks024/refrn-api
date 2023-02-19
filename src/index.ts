@@ -1,7 +1,7 @@
 import express, { Express, Response, Request } from 'express';
 import * as dotenv from 'dotenv';
-import { collectionRouter } from './components/collections';
-import { imageRouter } from './components/image';
+import { collectionRouter } from './features/collections';
+import { imageRouter } from './features/image';
 import { connect } from './database';
 
 dotenv.config({ path: './.env.development.local' });
