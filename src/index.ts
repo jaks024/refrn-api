@@ -1,8 +1,9 @@
 import express, { Express, Response, Request } from 'express';
 import * as dotenv from 'dotenv';
-import { collectionRouter } from './features/collections';
+import { collectionRouter } from './features/collection';
 import { imageRouter } from './features/image';
 import { connect } from './database';
+import { userRouter } from './features/user';
 
 dotenv.config({ path: './.env.development.local' });
 
@@ -14,6 +15,7 @@ connect();
 app.use(express.json());
 app.use('/image', imageRouter);
 app.use('/collection', collectionRouter);
+app.use('/user', userRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World! aaa');

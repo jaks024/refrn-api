@@ -8,7 +8,6 @@ export const ImageSchema = new Schema(
     source: String,
     tags: [String],
     transforms: [String],
-    createdDate: Date,
   },
   {
     timestamps: true,
