@@ -1,5 +1,5 @@
 import { Collection } from '../../database/models/Collection';
-import { CollectionDto } from './types';
+import { CollectionDto, CollectionIdentifierTree } from './types';
 
 export const getCollection = async (collectionId: string) => {
   const collection = await Collection.findById(collectionId);
@@ -35,4 +35,30 @@ export const getAllCollections = async () => {
     return null;
   }
   return allCollections;
+};
+
+export const GetCollectionTree = async (
+  collectionId: string,
+): Promise<CollectionIdentifierTree> => {
+  const collection = await Collection.findById(collectionId);
+  if (collection === null) {
+    return {
+      id: '',
+      name: '',
+      imageIdsCount: 0,
+      subCollections: [],
+    };
+  }
+  const subCollection = await Promise.all(
+    collection.subCollectionIds.map((id) => {
+      return GetCollectionTree(id);
+    }),
+  );
+
+  return {
+    id: collection?.id,
+    name: collection.name ? collection.name : '',
+    imageIdsCount: collection.imageIds ? collection.imageIds.length : -1,
+    subCollections: subCollection.filter((c) => c.id.length > 0),
+  };
 };

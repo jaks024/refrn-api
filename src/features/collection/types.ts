@@ -5,3 +5,10 @@ export interface CollectionDto {
   subCollectionIds: string[];
   cover: string;
 }
+
+export interface CollectionIdentifierTree {
+  id: string;
+  name: string;
+  imageIdsCount: number;
+  subCollections: CollectionIdentifierTree[];
+}

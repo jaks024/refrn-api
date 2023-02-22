@@ -1,4 +1,5 @@
 import express, { Express, Response, Request } from 'express';
+import cors from 'cors';
 import * as dotenv from 'dotenv';
 import { collectionRouter } from './features/collection';
 import { imageRouter } from './features/image';
@@ -12,6 +13,7 @@ const port = process.env.PORT;
 
 connect();
 
+app.use(cors());
 app.use(express.json());
 app.use('/image', imageRouter);
 app.use('/collection', collectionRouter);

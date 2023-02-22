@@ -5,6 +5,7 @@ import {
   deleteCollection,
   getAllCollections,
   getCollection,
+  GetCollectionTree,
   updateCollection,
 } from './collectionsController';
 
@@ -16,6 +17,19 @@ collectionRouter.get(
     try {
       console.log('called all');
       const response = await getAllCollections();
+      respond(res, response);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+collectionRouter.get(
+  '/:id/all',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log('called all');
+      const response = await GetCollectionTree(req.params.id);
       respond(res, response);
     } catch (error) {
       next(error);
