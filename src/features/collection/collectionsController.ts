@@ -1,5 +1,6 @@
 import { Collection } from '../../database/models/Collection';
-import { CollectionDto, CollectionIdentifierTree } from './types';
+import { User } from '../../database/models/User';
+import { CollectionDto } from './types';
 
 export const getCollection = async (collectionId: string) => {
   const collection = await Collection.findById(collectionId);
@@ -29,8 +30,43 @@ export const updateCollectionSubCollection = async (
   return updatedCollection;
 };
 
-export const deleteCollection = async (collectionId: string) => {
+const deleteAllSubCollections = async (collectionId: string) => {
   const deletedCollection = await Collection.findByIdAndDelete(collectionId);
+  if (
+    deletedCollection === null ||
+    deletedCollection.subCollectionIds.length === 0
+  ) {
+    return;
+  }
+  await Promise.all(
+    deletedCollection.subCollectionIds.map(async (id) => {
+      return deleteAllSubCollections(id);
+    }),
+  );
+};
+
+export const deleteCollection = async (
+  collectionId: string,
+  parentId: string,
+  isParentUser: boolean,
+) => {
+  const deletedCollection = await Collection.findByIdAndDelete(collectionId);
+  if (deletedCollection !== null) {
+    await Promise.all(
+      deletedCollection.subCollectionIds.map(async (id) => {
+        return deleteAllSubCollections(id);
+      }),
+    );
+  }
+  if (!isParentUser) {
+    await Collection.findByIdAndUpdate(parentId, {
+      $pull: { subCollectionIds: collectionId },
+    });
+  } else {
+    await User.findByIdAndUpdate(parentId, {
+      $pull: { collectionIds: collectionId },
+    });
+  }
   return deletedCollection;
 };
 
@@ -52,43 +88,4 @@ export const getAllCollections = async () => {
     return null;
   }
   return allCollections;
-};
-
-export const GetCollectionTree = async (
-  collectionId: string,
-): Promise<CollectionIdentifierTree> => {
-  const collection = await Collection.findById(collectionId);
-  if (collection === null) {
-    return {
-      id: '',
-      name: '',
-      imageIdsCount: 0,
-      subCollections: [],
-    };
-  }
-  const subCollection = await Promise.all(
-    collection.subCollectionIds.map((id) => {
-      return GetCollectionTree(id);
-    }),
-  );
-
-  return {
-    id: collection?.id,
-    name: collection.name ? collection.name : '',
-    imageIdsCount: collection.imageIds ? collection.imageIds.length : -1,
-    subCollections: subCollection.filter((c) => c.id.length > 0),
-  };
-};
-
-export const GetSubCollections = async (collectionId: string) => {
-  const collection = await Collection.findById(collectionId);
-  if (collection === null) {
-    return [];
-  }
-  const subCollection = await Promise.all(
-    collection.subCollectionIds.map(async (id) => {
-      return await Collection.findById(id);
-    }),
-  );
-  return subCollection;
 };

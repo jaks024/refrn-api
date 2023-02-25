@@ -5,8 +5,6 @@ import {
   deleteCollection,
   getAllCollections,
   getCollection,
-  GetCollectionTree,
-  GetSubCollections,
   updateCollection,
   updateCollectionSubCollection,
 } from './collectionsController';
@@ -19,32 +17,6 @@ collectionRouter.get(
     try {
       console.log('called all');
       const response = await getAllCollections();
-      respond(res, response);
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-collectionRouter.get(
-  '/:id/all',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      console.log('called all');
-      const response = await GetCollectionTree(req.params.id);
-      respond(res, response);
-    } catch (error) {
-      next(error);
-    }
-  },
-);
-
-collectionRouter.get(
-  '/:id/sub',
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      console.log('called all');
-      const response = await GetSubCollections(req.params.id);
       respond(res, response);
     } catch (error) {
       next(error);
@@ -112,7 +84,11 @@ collectionRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       console.log('received delete');
-      const response = await deleteCollection(req.params.id);
+      const response = await deleteCollection(
+        req.params.id,
+        req.body.parentId,
+        req.body.isParentUser,
+      );
       respond(res, response);
     } catch (error) {
       next(error);
