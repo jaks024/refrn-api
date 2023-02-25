@@ -4,6 +4,7 @@ export interface CollectionDto {
   imageIds: string[];
   subCollectionIds: string[];
   cover: string;
+  parentId: string;
 }
 
 export interface CollectionIdentifierTree {
@@ -11,4 +12,8 @@ export interface CollectionIdentifierTree {
   name: string;
   imageIdsCount: number;
   subCollections: CollectionIdentifierTree[];
+}
+
+export interface DeleteCollectionDto {
+  parentId: string;
 }

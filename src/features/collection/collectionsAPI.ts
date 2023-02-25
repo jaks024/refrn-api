@@ -6,7 +6,9 @@ import {
   getAllCollections,
   getCollection,
   GetCollectionTree,
+  GetSubCollections,
   updateCollection,
+  updateCollectionSubCollection,
 } from './collectionsController';
 
 export const collectionRouter = express.Router();
@@ -38,6 +40,19 @@ collectionRouter.get(
 );
 
 collectionRouter.get(
+  '/:id/sub',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log('called all');
+      const response = await GetSubCollections(req.params.id);
+      respond(res, response);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+collectionRouter.get(
   '/:id',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -56,6 +71,22 @@ collectionRouter.post(
     try {
       console.log('received psot');
       const response = await createCollection(req.body);
+      respond(res, response);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+collectionRouter.put(
+  '/:id/sub',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      console.log('received update');
+      const response = await updateCollectionSubCollection(
+        req.params.id,
+        req.body,
+      );
       respond(res, response);
     } catch (error) {
       next(error);

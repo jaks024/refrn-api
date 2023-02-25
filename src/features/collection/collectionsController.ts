@@ -17,6 +17,18 @@ export const updateCollection = async (
   return updatedCollection;
 };
 
+export const updateCollectionSubCollection = async (
+  collectionId: string,
+  subCollectionIds: string[],
+) => {
+  const updatedCollection = await Collection.findByIdAndUpdate(collectionId, {
+    $set: {
+      subCollectionIds: subCollectionIds,
+    },
+  });
+  return updatedCollection;
+};
+
 export const deleteCollection = async (collectionId: string) => {
   const deletedCollection = await Collection.findByIdAndDelete(collectionId);
   return deletedCollection;
@@ -25,6 +37,11 @@ export const deleteCollection = async (collectionId: string) => {
 export const createCollection = async (collectionDto: CollectionDto) => {
   const newCollection = await Collection.create(collectionDto);
   console.log(newCollection);
+  if (collectionDto.parentId.length > 0) {
+    await Collection.findByIdAndUpdate(collectionDto.parentId, {
+      $push: { subCollectionIds: newCollection._id },
+    });
+  }
   return { id: newCollection._id };
 };
 
@@ -61,4 +78,17 @@ export const GetCollectionTree = async (
     imageIdsCount: collection.imageIds ? collection.imageIds.length : -1,
     subCollections: subCollection.filter((c) => c.id.length > 0),
   };
+};
+
+export const GetSubCollections = async (collectionId: string) => {
+  const collection = await Collection.findById(collectionId);
+  if (collection === null) {
+    return [];
+  }
+  const subCollection = await Promise.all(
+    collection.subCollectionIds.map(async (id) => {
+      return await Collection.findById(id);
+    }),
+  );
+  return subCollection;
 };
