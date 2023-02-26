@@ -2,7 +2,8 @@ export interface ImageDto {
   url: string;
   name: string;
   description: string;
-  source: string;
+  sourceName: string;
+  sourceUrl: string;
   tags: string[];
   transforms: string[];
 }
