@@ -6,6 +6,7 @@ export const collectionSchema = new Schema(
     description: String,
     imageIds: [String],
     subCollectionIds: [String],
+    tags: [String],
     cover: String,
   },
   { timestamps: true },
